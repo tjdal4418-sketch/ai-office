@@ -1,0 +1,36 @@
+# 법인세 세무조정 규칙 — 적용연도 2026
+# 2026-11-07 한국 법령 MCP(현행 조문)로 확인한 항목은 verified: true. 못 확인한 항목은 없다.
+# 기업업무추진비(구 접대비) 한도 = 기본한도(중소기업 / 일반기업, 사업연도 개월수 환산) + 수입금액 × 적용률(구간별 누적)
+#   수입금액 구간: 0~tier2_over 는 tier1_rate, tier2_over~tier3_over 는 tier2_rate, tier3_over 초과는 tier3_rate
+#   (법인세법 제25조④2호 — 100억 이하 0.3%, 100억 초과 500억 이하는 3천만원 + 초과분 0.2%, 500억 초과는 1억1천만원 + 초과분 0.03%)
+# 키(entertainment)는 옛 이름 그대로 두었다(코드·엑셀 참조용 식별자). 화면에는 '기업업무추진비'로 표시한다.
+
+entertainment:                       # 기업업무추진비
+  basic_limit_sme:                   # 기본한도 — 중소기업 (연)
+    { value: 36000000, source: "법인세법 제25조④1호 (중소기업 3,600만원)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  basic_limit_general:               # 기본한도 — 일반기업 (연)
+    { value: 12000000, source: "법인세법 제25조④1호 (일반 1,200만원)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  tier1_rate:                        # 수입금액 ~ tier2_over 구간 적용률
+    { value: 0.003, source: "법인세법 제25조④2호 (수입금액 100억원 이하 1만분의 30)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  tier2_over:
+    { value: 10000000000, source: "법인세법 제25조④2호 (100억원 초과 구간의 시작)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  tier2_rate:
+    { value: 0.002, source: "법인세법 제25조④2호 (100억원 초과 500억원 이하: 3천만원 + 초과분 × 1만분의 20)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  tier3_over:
+    { value: 50000000000, source: "법인세법 제25조④2호 (500억원 초과 구간의 시작)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  tier3_rate:
+    { value: 0.0003, source: "법인세법 제25조④2호 (500억원 초과: 1억1천만원 + 초과분 × 1만분의 3)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+imputed_interest:                    # 업무무관 가지급금 인정이자
+  rate:                              # 적용 이자율(당좌대출이자율) 연
+    { value: 0.046, source: "법인세법 시행규칙 제43조② (당좌대출이자율 연간 1,000분의 46) — 가중평균차입이자율 선택 여부는 별도 검토", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+bad_debt:                            # 대손충당금
+  fixed_rate:                        # 채권잔액 대비 설정률(대손실적률과 비교해 큰 값 — 실적률은 입력이 없어 미반영)
+    { value: 0.01, source: "법인세법 제34조 + 법인세법 시행령 제61조② (채권잔액의 100분의 1)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+vehicle:                             # 업무용승용차
+  depreciation_limit:                # 1대당 연간 감가상각비 한도
+    { value: 8000000, source: "법인세법 시행령 제50조의2⑩ (연 800만원)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  log_threshold:                     # 운행기록부 미작성 시 인정되는 1대당 연간 비용 한도
+    { value: 15000000, source: "법인세법 시행령 제50조의2⑦ (운행기록을 작성하지 않은 경우 인정 한도 1,500만원 — 부동산임대업 등 특정 법인은 ⑮ 500만원/400만원)", year: 2026, verified: true, verified_on: "2026-11-07" }

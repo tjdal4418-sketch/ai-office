@@ -1,0 +1,50 @@
+﻿# 원천세 규칙 — 적용연도 2026
+# 2026-11-07 법령 MCP 확인 결과 반영 (확인된 항목: verified: true).
+# 간이세액표·자녀 공제는 2026-11-07 홈택스 엑셀을 반입해 확인함. 남은 external: "..." 항목은 법령 MCP로 확인할 수 없는 '외부 자료 반입 필요' 항목 — 값을 받아 넣으면 external 줄을 지우고 verified: true 로 바꾼다.
+#   (외부 자료 반입 필요 = 주황 표시, 확인필요(빨강)와 따로 센다)
+# 근로소득 간이세액표는 simple_tax_table.csv 로 분리 (scripts/import_simple_tax_table.py 로 홈택스 엑셀에서 변환, 헤더 주석에 출처·반입일).
+
+simple_table:
+  file:
+    { value: "simple_tax_table.csv", source: "국세청 홈택스 근로소득 간이세액표 (소득세법 시행령 별표2, 제189조제1항 관련) — 2026.03.01 시행분 647개 구간 반입", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+local_income_tax:                    # 지방소득세(소득세의 10%)
+  rate:
+    { value: 0.1, source: "지방세법 제103조의13① (소득세 원천징수세액의 10%)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:
+    { value: 10, source: "국고금 관리법 제47조③ 준용 (지방자치단체 — 10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+child_credit:                        # 간이세액표 자녀 세액공제(월) — 8세 이상 20세 이하 (간이세액표 안내문 3. 가·나·다목)
+  one_child:
+    { value: 20830, source: "소득세법 시행령 별표2 안내문 3.가목 (자녀 1명 20,830원) — 홈택스 간이세액표 2026.03.01 시행분", year: 2026, verified: true, verified_on: "2026-11-07" }
+  two_children:
+    { value: 45830, source: "소득세법 시행령 별표2 안내문 3.나목 (자녀 2명 45,830원) — 홈택스 간이세액표 2026.03.01 시행분", year: 2026, verified: true, verified_on: "2026-11-07" }
+  extra_per_child:                   # 3명째부터 1명당 추가
+    { value: 33330, source: "소득세법 시행령 별표2 안내문 3.다목 (3명 이상: 45,830원 + 2명 초과 1명당 33,330원) — 홈택스 간이세액표 2026.03.01 시행분", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+business_income:                     # 사업소득(인적용역) 원천징수
+  rate:
+    { value: 0.03, source: "소득세법 제129조①3호 (사업소득 3%)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:
+    { value: 10, source: "국고금 관리법 제47조① (원천징수 소득세는 국고금 — 10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+other_income:                        # 기타소득 원천징수
+  required_expense_rate:             # 필요경비 의제율 (제21조①7·8의2·9·15·19호 소득에만 해당 — 코드는 입력된 기타소득 전부에 60% 적용)
+    { value: 0.6, source: "소득세법 시행령 제87조제1호의2 (소득세법 제21조①7·8의2·9·15·19호 소득의 필요경비 의제 60%)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  rate:
+    { value: 0.2, source: "소득세법 제129조①6호라목 (기타소득 20%)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  minimum_taxable_income:            # 건별 '기타소득금액'(지급액 − 필요경비)이 이 금액 이하면 과세최저한으로 원천징수 없음
+    { value: 50000, source: "소득세법 제84조제4호 (건별 기타소득금액 5만원 이하 과세최저한)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:
+    { value: 10, source: "국고금 관리법 제47조① (원천징수 소득세는 국고금 — 10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+report_codes:                        # 원천징수이행상황신고서 소득 코드 (값 확인 전에는 화면에 '외부 자료 반입 필요'로 표시)
+  wage_simple:
+    { value: null, source: "법령이 아니라 서식 작성요령 (국세청 서식, 소득세법 시행규칙 별지 제21호)", year: 2026, verified: false, verified_on: null,
+      external: "국세청 원천징수이행상황신고서 작성요령(코드표)에서 근로소득 간이세액 코드 확인" }
+  business:
+    { value: null, source: "법령이 아니라 서식 작성요령 (국세청 서식, 소득세법 시행규칙 별지 제21호)", year: 2026, verified: false, verified_on: null,
+      external: "국세청 원천징수이행상황신고서 작성요령(코드표)에서 사업소득 코드 확인" }
+  other:
+    { value: null, source: "법령이 아니라 서식 작성요령 (국세청 서식, 소득세법 시행규칙 별지 제21호)", year: 2026, verified: false, verified_on: null,
+      external: "국세청 원천징수이행상황신고서 작성요령(코드표)에서 기타소득 코드 확인" }

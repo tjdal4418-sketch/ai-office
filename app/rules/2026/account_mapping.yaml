@@ -1,0 +1,38 @@
+# 계정과목 추천 규칙 (적요·거래처 키워드 → 계정과목 이름)
+# - 법령 수치가 아닌 사무실 규칙입니다. 담당자가 거래처 관행에 맞게 계속 보정하세요.
+# - 위에서부터 먼저 맞는 규칙을 사용합니다. 적요와 거래처를 합친 글자에서 키워드를 찾습니다(대소문자 무시).
+# - direction: out(출금·카드사용) / in(입금) / any
+# - confidence: high(높음 → '추천') / low(낮음 → '확인필요' — AI 가 확정하지 않음)
+# - 계정은 코드가 아니라 이름으로 적습니다. 고객사 계정과목표에 없으면 '확인필요'로 두고 가지급금/가수금으로 보냅니다.
+# - 어떤 규칙에도 안 맞으면 출금은 가지급금, 입금은 가수금(낮음/확인필요)으로 둡니다. (bookkeeping.yaml > accounts)
+meta:
+  kind: 사무실 규칙 (법령 아님)
+  verified: true
+  verified_on: "2026-11-07"
+  note: 사무실 내부 기준입니다. 거래처 관행에 맞게 계속 보정하세요.
+
+rules:
+  - { id: salary,        keywords: ["급여", "월급", "상여금"],               direction: out, account: 급여,        confidence: high }
+  - { id: withholding,   keywords: ["원천세", "원천징수", "소득세납부"],      direction: out, account: 예수금,      confidence: high }
+  - { id: insurance4,    keywords: ["국민연금", "건강보험", "고용보험", "4대보험"], direction: out, account: 예수금, confidence: low }
+  - { id: card_settle,   keywords: ["카드대금", "카드결제", "법인카드"],      direction: out, account: 미지급금,    confidence: high }
+  - { id: rent,          keywords: ["임대료", "월세", "관리비"],             direction: out, account: 임차료,      confidence: high }
+  - { id: telecom,       keywords: ["통신", "KT", "SKT", "가온통신", "인터넷"], direction: out, account: 통신비, confidence: high }
+  - { id: insurance,     keywords: ["보험료", "화재보험"],                   direction: out, account: 보험료,      confidence: high }
+  - { id: vehicle,       keywords: ["주유", "주차", "통행료", "하이패스", "세차"], direction: out, account: 차량유지비, confidence: high }
+  - { id: travel,        keywords: ["택시", "KTX", "SRT", "버스", "항공", "철도"], direction: out, account: 여비교통비, confidence: high }
+  - { id: entertain,     keywords: ["접대", "기업업무추진", "골프", "선물", "화환"], direction: out, account: 접대비,      confidence: high }  # 계정과목 이름은 고객사 계정과목표 기준(기업업무추진비로 쓰는 고객사는 이 줄의 account 를 바꾼다)
+  - { id: meal,          keywords: ["식당", "식사", "커피", "스타벅스", "음식", "배달"], direction: out, account: 복리후생비, confidence: low }
+  - { id: ads,           keywords: ["광고", "다온포털", "구글", "페이스북", "카카오"], direction: out, account: 광고선전비, confidence: high }
+  - { id: fee,           keywords: ["수수료", "세무", "기장", "법무"],         direction: out, account: 지급수수료,  confidence: high }
+  - { id: supplies_hi,   keywords: ["문구", "사무용품", "복합기", "토너"],      direction: out, account: 소모품비,    confidence: high }
+  - { id: supplies_lo,   keywords: ["쿠팡", "다이소", "마트", "11번가", "G마켓"], direction: out, account: 소모품비, confidence: low }
+  - { id: material,      keywords: ["원재료", "자재", "부품"],                direction: out, account: 외상매입금,  confidence: high }
+  - { id: loan_repay,    keywords: ["대출상환", "원금상환"],                  direction: out, account: 장기차입금,  confidence: low }
+  - { id: interest_out,  keywords: ["이자"],                                 direction: out, account: 이자비용,    confidence: high }
+  - { id: vat_pay,       keywords: ["부가세", "부가가치세"],                  direction: out, account: 부가세예수금, confidence: low }
+  - { id: ceo_advance,   keywords: ["대표", "가불", "가지급"],                direction: out, account: 가지급금,    confidence: low }
+  - { id: sales_in,      keywords: ["물품대", "매출", "용역대금", "납품대금"],  direction: in,  account: 외상매출금,  confidence: high }
+  - { id: interest_in,   keywords: ["이자"],                                 direction: in,  account: 이자수익,    confidence: high }
+  - { id: capital_in,    keywords: ["증자", "출자"],                         direction: in,  account: 자본금,      confidence: low }
+  - { id: ceo_return,    keywords: ["대표", "가수"],                         direction: in,  account: 가수금,      confidence: low }

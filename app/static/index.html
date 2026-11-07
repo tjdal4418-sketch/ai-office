@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>AI 오피스</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="max-w-7xl mx-auto p-4 md:p-6">
+    <!-- 상단: 로고 · 오늘 날짜 · 신고기한 D-day -->
+    <header class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div>
+        <h1 class="text-2xl font-bold">🏢 AI 오피스</h1>
+        <p id="today" class="text-sm t-sub"></p>
+      </div>
+      <div id="deadlines" class="flex flex-wrap gap-2" aria-label="다가오는 신고기한"></div>
+      <div class="flex items-center gap-3">
+        <!-- 보기 전환: 목록 뷰(여기) ↔ 오피스 뷰. 좁은 화면(768px 미만)에서는 오피스 뷰가 목록으로 되돌아오므로 숨김 -->
+        <nav class="hidden md:flex gap-1" aria-label="보기 전환">
+          <span class="btn btn-primary" aria-current="page">📋 목록 뷰</span>
+          <a href="/" class="btn btn-ghost">🏢 오피스 뷰</a>
+        </nav>
+        <span id="mode" class="text-xs t-mute">연결 중…</span>
+        <button id="themeBtn" class="btn btn-ghost" title="다크모드 전환" aria-label="다크모드 전환">🌓</button>
+      </div>
+    </header>
+
+    <!-- 작업 옵션 -->
+    <section class="card mb-4 flex flex-wrap items-center gap-3">
+      <label class="text-sm">적용연도 <select id="year" class="input !w-auto ml-1"></select></label>
+      <label class="text-sm">고객사 <select id="client" class="input !w-auto ml-1"></select></label>
+      <label class="text-sm flex items-center gap-1 t-sub"><input id="simError" type="checkbox"> 오류 상태 시연(데모)</label>
+      <label class="text-sm" title="코택(기업업무추진비 한도)·매니저 월마감에 쓰여요">기업 구분 <select id="sme" class="input !w-auto ml-1"><option value="1">중소기업</option><option value="0">일반기업</option></select></label>
+      <label class="text-sm" title="비우면 시산표의 매출 계정 합계를 써요">수입금액(원) <input id="revenue" class="input !w-36 ml-1" inputmode="numeric" placeholder="선택"></label>
+      <span class="text-xs t-mute">※ 💰페이·📒북키·🧾배트·🏛️코택은 샘플 데이터로 실행돼요. 📁매니저의 "월마감 시작"은 네 업무를 순서대로 나눠 줍니다</span>
+    </section>
+
+    <div class="grid gap-4 lg:grid-cols-[1fr_340px]">
+      <!-- 가운데: 사무실 평면도 -->
+      <section id="floor" class="floor p-4 md:p-6">
+        <div class="text-xs t-mute mb-3">🚪 입구 · 사무실 평면도 (카드를 누르면 상세 페이지)</div>
+        <div class="max-w-md mx-auto mb-4" id="desk-manager"></div>
+        <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+          <div id="desk-payroll"></div>
+          <div id="desk-bookkeeping"></div>
+          <div id="desk-vat"></div>
+          <div id="desk-corptax"></div>
+        </div>
+      </section>
+
+      <!-- 우측: 실시간 활동 로그 -->
+      <aside class="card">
+        <h2 class="font-bold mb-2">📣 실시간 활동 로그</h2>
+        <ul id="feed" class="feed"><li class="t-mute">아직 활동이 없어요</li></ul>
+      </aside>
+    </div>
+
+    <!-- 하단: 요약 -->
+    <section class="grid gap-4 grid-cols-1 sm:grid-cols-3 mt-4">
+      <div class="card"><div class="text-sm t-sub">오늘 처리 건수</div><div id="sumProcessed" class="stat-num">0</div><div class="text-xs t-mute">AI 작성이 끝난 작업</div></div>
+      <div class="card"><div class="text-sm t-sub">검토 대기 건수</div><div id="sumReview" class="stat-num" style="color:var(--c-amber)">0</div><div class="text-xs t-mute">담당자 승인 필요</div></div>
+      <div class="card"><div class="text-sm t-sub">오류 건수</div><div id="sumError" class="stat-num" style="color:var(--c-red)">0</div><div class="text-xs t-mute">오늘 발생</div></div>
+    </section>
+
+    <footer class="mt-4 text-xs t-mute">
+      모든 데이터는 가상의 회사·인물입니다. 법령 수치는 app/rules/ 에서 근거와 함께 관리하며, '검증 전' 표시는 사용자 확인 대기 항목입니다.
+    </footer>
+  </div>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/home.js"></script>
+</body>
+</html>

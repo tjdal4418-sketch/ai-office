@@ -1,0 +1,11 @@
+# 가상 고객사 (실제 회사·인물과 무관한 샘플)
+# 상세 샘플 엑셀/CSV 는 에이전트별 구현 단계(2단계~)에서 추가
+clients:
+  - id: ganasangsa
+    name: (주)가나상사
+    industry: 제조업
+    note: 직원 15명 내외, 사업소득자 1~2명
+  - id: daratech
+    name: (주)다라테크
+    industry: IT서비스
+    note: 직원 8명 내외, 기타소득(강연료 등) 지급 건 포함

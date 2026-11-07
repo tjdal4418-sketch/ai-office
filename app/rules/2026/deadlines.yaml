@@ -1,0 +1,137 @@
+# 신고기한 규칙 — 적용연도 2026 (매니저의 신고기한 캘린더·홈 D-day 배지가 이 파일을 읽는다)
+# 2026-11-07 한국 법령 MCP(현행 조문)로 확인한 항목은 verified: true. 4대보험 납부기한·보수총액신고도 2차 검증에서 확인.
+# note: 가 있으면 화면(캘린더)에 참고 문구로 함께 보여준다.
+# 법인·개인·업종·규모에 따라 달라지는 예외(성실신고확인 대상 법인 등)는 반영하지 않았다 — 12월 결산 일반 법인 기준.
+# schedule 형식: monthly {day} (31 은 말일) / yearly {dates: ["MM-DD", ...]} (날짜 자리에 '말일' 가능 — 예: "02-말일")
+# category: 캘린더 분류 (원천세 / 부가세 / 법인세 / 연말정산·지급명세서 / 4대보험)
+# home: true 이면 홈 상단 D-day 배지 후보
+# 기한이 토요일·일요일·공휴일·대체공휴일·노동절이면 다음 영업일로 순연한다 (rules/<연도>/holidays.yaml, 근거는 아래 shift_source)
+shift_source: "국세기본법 제5조①3호 (2025.11.11 개정 — 기한 만료일이 토요일·일요일·공휴일·대체공휴일·근로자의 날(노동절, 5월 1일)이면 그 다음 날)"
+shift_verified: true
+shift_verified_on: "2026-11-07"
+
+deadlines:
+  - id: withholding_monthly
+    name: 원천세 신고·납부
+    category: 원천세
+    home: true
+    schedule: { type: monthly, day: 10 }
+    source: "소득세법 제128조① (원천징수 다음 달 10일)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: withholding_halfyear
+    name: 원천세 반기납부(승인 사업자)
+    category: 원천세
+    schedule: { type: yearly, dates: ["01-10", "07-10"] }
+    source: "소득세법 제128조② (반기별 납부 승인을 받은 사업자만 — 1/10, 7/10)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: vat_final
+    name: 부가세 확정신고
+    category: 부가세
+    home: true
+    schedule: { type: yearly, dates: ["01-25", "07-25"] }
+    source: "부가가치세법 제49조① (1기 7/25, 2기 다음 해 1/25)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: vat_prelim
+    name: 부가세 예정신고(법인)
+    category: 부가세
+    home: true
+    schedule: { type: yearly, dates: ["04-25", "10-25"] }
+    source: "부가가치세법 제48조① (예정신고 4/25, 10/25)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: corp_tax_dec
+    name: 법인세 신고(12월 결산)
+    category: 법인세
+    home: true
+    schedule: { type: yearly, dates: ["03-31"] }
+    source: "법인세법 제60조① (사업연도 종료일부터 3개월 — 성실신고확인 대상은 4개월)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: local_tax_corp
+    name: 법인지방소득세 신고(12월 결산)
+    category: 법인세
+    schedule: { type: yearly, dates: ["04-30"] }
+    source: "지방세법 제103조의23① (법인세 신고기한이 지난 날부터 1개월 — 성실신고확인 대상은 5개월)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: corp_tax_interim
+    name: 법인세 중간예납(12월 결산)
+    category: 법인세
+    schedule: { type: yearly, dates: ["08-31"] }
+    source: "법인세법 제63조②③ (중간예납기간 종료일부터 2개월 이내)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: year_end_settlement
+    name: 근로소득 연말정산 신고·납부
+    category: 연말정산·지급명세서
+    schedule: { type: yearly, dates: ["03-10"] }
+    source: "소득세법 제134조·제128조① (2월분 급여 지급 시 정산, 3월 10일 원천세로 신고·납부)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: payment_statement_annual
+    name: 지급명세서 제출(근로·퇴직·사업소득)
+    category: 연말정산·지급명세서
+    schedule: { type: yearly, dates: ["03-10"] }
+    source: "소득세법 제164조① (근로·퇴직·사업소득은 다음 연도 3월 10일)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: payment_statement_other
+    name: 지급명세서 제출(기타소득)
+    category: 연말정산·지급명세서
+    schedule: { type: yearly, dates: ["02-말일"] }
+    source: "소득세법 제164조① (기타소득 등은 다음 연도 2월 말일 — 3월 10일은 근로·퇴직·사업소득만 해당)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: simple_statement_wage
+    name: 근로소득 간이지급명세서(매월)
+    category: 연말정산·지급명세서
+    schedule: { type: monthly, day: 31 }
+    source: "소득세법 제164조의3①1호 (지급일이 속하는 달의 다음 달 말일)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: simple_statement_business
+    name: 사업소득 간이지급명세서(매월)
+    category: 연말정산·지급명세서
+    schedule: { type: monthly, day: 31 }
+    source: "소득세법 제164조의3①2호 (지급일이 속하는 달의 다음 달 말일)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: simple_statement_other
+    name: 기타소득(인적용역) 간이지급명세서(매월)
+    category: 연말정산·지급명세서
+    schedule: { type: monthly, day: 31 }
+    source: "소득세법 제164조의3①3호 (소득세법 제21조①19호 인적용역 기타소득 — 지급일이 속하는 달의 다음 달 말일)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: insurance_pay_monthly
+    name: 4대보험료 납부(국민연금·건강보험)
+    category: 4대보험
+    schedule: { type: monthly, day: 10 }
+    source: "국민건강보험법 제78조① (보험료 납부기한 다음 달 10일 — 건강보험공단이 4대보험 통합 징수, 사업장별 자동이체일은 다를 수 있음)"
+    verified: true
+    verified_on: "2026-11-07"
+
+  - id: insurance_wage_report
+    name: 고용·산재보험 보수총액 신고
+    category: 4대보험
+    schedule: { type: yearly, dates: ["03-15"] }
+    source: "고용보험 및 산업재해보상보험의 보험료징수 등에 관한 법률 부칙(법률 제21472호) 제2조 (2026년 지급분 보수총액신고는 2027-03-15)"
+    note: "2027년부터 제도 변경 — 보수총액신고(연 1회)가 월 보수 신고(매월)로 바뀐다 (징수법 제16조의10①, 2027-01-01 시행). rules/2027 을 만들 때 반영할 것."
+    verified: true
+    verified_on: "2026-11-07"

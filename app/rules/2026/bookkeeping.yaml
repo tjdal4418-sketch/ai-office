@@ -1,0 +1,23 @@
+# 북키(기장·결산) 설정 — 적용연도 2026
+# 법령 수치가 아니라 사무실 운영 기준·계정 이름 약속입니다. 담당자가 고객사에 맞게 조정하세요.
+# 2026-11-07 사무실 내부 기준으로 확정(verified: true). 사무실 기준이 바뀌면 값을 고치고 확인일을 갱신하세요.
+
+accounts:                            # 분개 생성에 꼭 필요한 계정과목 이름 (계정과목표에 있어야 함)
+  bank:
+    { value: "보통예금", source: "사무실 약속 — 은행 거래내역과 대응하는 장부 계정", year: 2026, verified: true, verified_on: "2026-11-07" }
+  card_payable:
+    { value: "미지급금", source: "사무실 약속 — 법인카드 사용분의 대변 계정", year: 2026, verified: true, verified_on: "2026-11-07" }
+  unclassified_out:
+    { value: "가지급금", source: "사무실 약속 — 용도 불명 출금은 가지급금으로 두고 '확인필요' 표시", year: 2026, verified: true, verified_on: "2026-11-07" }
+  unclassified_in:
+    { value: "가수금", source: "사무실 약속 — 내용 불명 입금은 가수금으로 두고 '확인필요' 표시", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+recon:
+  tolerance:                         # 이 금액 이하 차이는 일치로 본다(원)
+    { value: 0, source: "사무실 내부 기준 (법령 아님)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+bs_review:
+  watch_accounts:                    # 잔액이 오래 남으면 안 되는 주요 BS 계정
+    { value: ["가지급금", "가수금", "미지급비용", "선급비용"], source: "사무실 내부 기준 (법령 아님)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  stale_days:                        # 발생일로부터 이 일수 이상 미정리면 '장기 미정리'
+    { value: 180, source: "사무실 내부 기준 (법령 아님)", year: 2026, verified: true, verified_on: "2026-11-07" }

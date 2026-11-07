@@ -1,0 +1,29 @@
+# 결산 체크리스트 템플릿 — 사무실 업무 절차 (법령 수치 아님)
+# frequency: monthly(매월) / quarterly(분기말 월: 3·6·9·12월) / annual(12월 결산)
+# 월 결산은 항상 포함하고, 분기말 월이면 분기 항목, 12월이면 연 항목이 추가됩니다.
+# hint: 북키가 데이터를 보고 자동으로 남기는 점검 힌트의 종류 (코드의 HINTS 참고)
+# 사무실 내부 기준입니다. 결산 절차가 바뀌면 보정하세요.
+meta:
+  kind: 사무실 업무 절차 (법령 아님)
+  verified: true
+  verified_on: "2026-11-07"
+
+items:
+  - { key: tb_check,       frequency: monthly,   title: "합계잔액시산표 차대 일치 확인",           detail: "시산표 차변·대변 합계 일치, 전기이월 잔액 연결 확인", hint: tb }
+  - { key: journal_review, frequency: monthly,   title: "분개 추천 '확인필요' 항목 확정",            detail: "신뢰도 낮음 분개를 담당자가 계정과목 확정·수정", hint: low_conf }
+  - { key: bank_rec,       frequency: monthly,   title: "은행 잔액 대사(Reconciliation)",           detail: "은행 잔액 vs 장부 보통예금, 시차 항목 정리, 원인불명 차이 규명", hint: bank_rec }
+  - { key: card_unpaid,    frequency: monthly,   title: "법인카드 사용내역·증빙 대사, 미결제 확인", detail: "결제 전 사용분(미지급금) 잔액과 카드사 청구액 대사", hint: card_unpaid }
+  - { key: depreciation,   frequency: monthly,   title: "감가상각비 계상",                          detail: "유형자산별 월 감가상각비 분개 (고정자산대장 기준)", hint: depreciation }
+  - { key: prepaid,        frequency: monthly,   title: "선급비용 상각",                            detail: "보험료·임차료 등 선급비용을 기간 배분해 비용 처리", hint: prepaid }
+  - { key: accrued,        frequency: monthly,   title: "미지급비용 계상",                          detail: "급여·4대보험·이자 등 당월 귀속·미지급분 계상", hint: accrued }
+  - { key: fx,             frequency: monthly,   title: "외화환산",                                 detail: "외화예금·외화채권/채무가 있으면 기말 환율로 환산(없으면 '해당 없음' 체크)", hint: "" }
+  - { key: bs_review,      frequency: monthly,   title: "가지급금·가수금 등 BS 계정 잔액 점검",      detail: "마이너스 잔액, 장기 미정리 항목 원인 확인·정리", hint: bs_review }
+  - { key: vat_link,       frequency: quarterly, title: "부가세 신고 자료와 매출·매입 대사",          detail: "세금계산서 합계와 장부 매출·매입 일치 확인 (배트 연계)", hint: "" }
+  - { key: allowance,      frequency: quarterly, title: "충당금(대손·퇴직급여) 적정성 검토",          detail: "분기 잠정 결산 시 충당금 설정액 점검", hint: "" }
+  - { key: quarter_fs,     frequency: quarterly, title: "분기 잠정 재무제표 작성·검토",               detail: "시산표 기준 잠정 BS/PL 작성 후 담당자 검토", hint: "" }
+  - { key: inventory,      frequency: annual,    title: "재고자산 실사 및 기말 재고 평가",             detail: "실사 결과와 장부 재고 차이 조정", hint: "" }
+  - { key: fixed_assets,   frequency: annual,    title: "유형자산 실사·감가상각 확정",                 detail: "고정자산대장과 장부 대사, 연간 감가상각 확정", hint: "" }
+  - { key: year_allowance, frequency: annual,    title: "퇴직급여충당부채·대손충당금 확정",             detail: "연말 기준 설정액 산출·분개", hint: "" }
+  - { key: tax_link,       frequency: annual,    title: "법인세 비용 계상 (세무조정 연계)",            detail: "세무조정 결과를 반영한 법인세비용 분개 (코택 연계)", hint: "" }
+  - { key: fs_final,       frequency: annual,    title: "재무제표·주석 작성 및 승인 자료 준비",         detail: "확정 재무제표, 주석, 승인 절차 자료", hint: "" }
+  - { key: audit_pbc,      frequency: annual,    title: "외부감사 PBC 제출 현황 확인",                 detail: "PBC 리스트의 준비·제출 상태 점검", hint: "" }

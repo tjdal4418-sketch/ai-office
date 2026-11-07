@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# 실행하면 생기는 파일 (커밋하지 않음)
+*.db
+outputs/*
+!outputs/.gitkeep
+uploads/
+
+# 환경 설정·비밀값
+.env
+
+# 개인 도구 설정
+.claude/settings.local.json

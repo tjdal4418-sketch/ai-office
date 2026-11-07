@@ -1,0 +1,28 @@
+# 외부감사 PBC(Prepared By Client, 요청자료) 리스트 템플릿 — 사무실 업무 양식 (법령 수치 아님)
+# auto_ready: 북키가 입력·산출물로 준비 상태를 미리 채울 수 있는 항목
+#   bank / chart / opening : 해당 입력 파일을 받았으면 '준비완료'
+#   tb / gl                : 이번 작업 산출물이라 '준비중'(담당자 검토 승인 전)
+#   없음                   : '미준비'
+# 사무실 내부 기준입니다. 감사인이 보낸 실제 요청 목록에 맞게 보정하세요.
+meta:
+  kind: 사무실 업무 양식 (법령 아님)
+  verified: true
+  verified_on: "2026-11-07"
+
+items:
+  - { key: bank_stmt,   category: 자금,   title: "은행 거래내역서 및 기말 잔액증명서",       owner: 재무팀,   auto_ready: bank }
+  - { key: bank_list,   category: 자금,   title: "은행조회서 발송 대상 계좌 목록",           owner: 재무팀,   auto_ready: "" }
+  - { key: card_stmt,   category: 자금,   title: "법인카드 사용내역 및 증빙",                owner: 재무팀,   auto_ready: card }
+  - { key: chart,       category: 회계,   title: "계정과목표",                                owner: 회계팀,   auto_ready: chart }
+  - { key: tb,          category: 회계,   title: "합계잔액시산표(기말)",                      owner: 회계팀,   auto_ready: tb }
+  - { key: gl,          category: 회계,   title: "총계정원장·분개장",                          owner: 회계팀,   auto_ready: gl }
+  - { key: opening,     category: 회계,   title: "전기말 잔액(전기 재무제표 연결 확인)",       owner: 회계팀,   auto_ready: opening }
+  - { key: ar_aging,    category: 채권,   title: "매출처별 채권 잔액 명세 및 연령 분석",       owner: 영업지원, auto_ready: "" }
+  - { key: ap_list,     category: 채무,   title: "매입처별 채무 잔액 명세",                    owner: 구매팀,   auto_ready: "" }
+  - { key: advance,     category: 가계정, title: "가지급금·가수금 명세 및 사유(약정서 포함)",  owner: 회계팀,   auto_ready: "" }
+  - { key: fixed_asset, category: 자산,   title: "고정자산대장·감가상각 명세",                 owner: 총무팀,   auto_ready: "" }
+  - { key: payroll,     category: 인사,   title: "급여대장·퇴직급여 산출 근거",                owner: 인사팀,   auto_ready: "" }
+  - { key: tax_invoice, category: 세무,   title: "부가세 신고서·세금계산서 합계표",            owner: 세무팀,   auto_ready: "" }
+  - { key: loans,       category: 차입,   title: "차입금 명세 및 약정서",                      owner: 재무팀,   auto_ready: "" }
+  - { key: contracts,   category: 기타,   title: "주요 계약서 목록",                           owner: 법무팀,   auto_ready: "" }
+  - { key: minutes,     category: 기타,   title: "이사회·주주총회 의사록",                     owner: 총무팀,   auto_ready: "" }

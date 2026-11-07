@@ -1,0 +1,56 @@
+﻿# 4대보험 규칙 — 적용연도 2026
+# 2026-11-07 한국 법령 MCP(현행 조문) + 고시 확인 결과를 반영했습니다. 확인된 항목은 verified: true, verified_on 에 확인일.
+# 2026-11-07 2차 검증으로 이 파일의 모든 항목이 확인됨 (절사 단위, 2026.7월 이후 하한 41만원 포함).
+# 요율은 소수(0.045 = 4.5%). truncate_unit 은 절사 단위(원) — 10 이면 10원 미만 절사.
+# 각 항목: value / source(근거 법령·고시) / year / verified / verified_on
+
+national_pension:                    # 국민연금
+  employee_rate:
+    { value: 0.0475, source: "국민연금법 제88조③ + 부칙(법률 제20903호) 제4조①1호 (2026년은 1만분의 475, 근로자·사업주 각각)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  employer_rate:
+    { value: 0.0475, source: "국민연금법 제88조③ + 부칙(법률 제20903호) 제4조①1호 (2026년은 1만분의 475, 근로자·사업주 각각)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  limits:                            # 기준소득월액 상·하한 — 적용기간이 7월~다음 해 6월이라 기간별로 나눈다 (급여 귀속월에 맞는 기간을 쓴다)
+    h1_2026:                         # 국민연금 기준소득월액 (2026.1~6월 적용)
+      applies:
+        { value: "2026-01~2026-06", source: "기준소득월액 상·하한액 적용기간 (매년 7월~다음 해 6월 — 이 기간은 직전 고시분)", year: 2026, verified: true, verified_on: "2026-11-07" }
+      floor:                         # 하한
+        { value: 400000, source: "보건복지부고시 — 2026.1~6월 적용 기준소득월액 하한액 (검증결과 2026-11-07)", year: 2026, verified: true, verified_on: "2026-11-07" }
+      cap:                           # 상한
+        { value: 6370000, source: "보건복지부고시 — 2026.1~6월 적용 기준소득월액 상한액 (검증결과 2026-11-07)", year: 2026, verified: true, verified_on: "2026-11-07" }
+    h2_2026:                         # 국민연금 기준소득월액 (2026.7~2027.6월 적용)
+      applies:
+        { value: "2026-07~2027-06", source: "보건복지부고시 제2026-31호 (적용기간 2026.7.1~2027.6.30)", year: 2026, verified: true, verified_on: "2026-11-07" }
+      floor:
+        { value: 410000, source: "국민연금공단·보건복지부 발표 (2026.7~2027.6 기준소득월액 하한 40만원 → 41만원, 2026-07-13 보도) / 적용기간은 국민연금법 시행령 제5조④. 고시 원문(제2026-31호)으로 재확인하면 더 좋음", year: 2026, verified: true, verified_on: "2026-11-07" }
+      cap:
+        { value: 6590000, source: "보건복지부고시 제2026-31호 (2026.7~2027.6 기준소득월액 상한)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  base_truncate_unit:                # 기준소득월액 절사 단위
+    { value: 1000, source: "국민연금법 시행령 제5조① (기준소득월액은 1천원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:                     # 보험료 절사 단위
+    { value: 10, source: "국고금 관리법 제47조③ 준용 (10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+health_insurance:                    # 건강보험
+  employee_rate:
+    { value: 0.03595, source: "국민건강보험법 시행령 제44조① (보험료율 1만분의 719) ÷ 2 = 3.595% (근로자 부담)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  employer_rate:
+    { value: 0.03595, source: "국민건강보험법 시행령 제44조① (보험료율 1만분의 719) ÷ 2 = 3.595% (사업주 부담)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:
+    { value: 10, source: "국고금 관리법 제47조③ 준용 (10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+long_term_care:                      # 장기요양 — 보수 × 0.9448% (근로자·사업주 각 0.4724%)
+  total_rate:                        # 합계(참고용 — 계산에는 근로자·사업주 요율을 각각 쓴다)
+    { value: 0.009448, source: "노인장기요양보험법 시행령 제4조 (보수 × 1만분의 9448)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  employee_rate:
+    { value: 0.004724, source: "노인장기요양보험법 시행령 제4조 (0.9448% ÷ 2, 근로자 부담)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  employer_rate:
+    { value: 0.004724, source: "노인장기요양보험법 시행령 제4조 (0.9448% ÷ 2, 사업주 부담)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:
+    { value: 10, source: "국고금 관리법 제47조③ 준용 (10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+employment_insurance:                # 고용보험
+  employee_rate:
+    { value: 0.009, source: "고용보험 및 산업재해보상보험의 보험료징수 등에 관한 법률 시행령 제12조①2호 (실업급여 1천분의 18 ÷ 2 = 0.9%)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  employer_rate:                     # 사업주: 실업급여 0.9% + 고용안정·직업능력개발 (150인 미만 기업 가정)
+    { value: 0.0115, source: "고용보험 및 산업재해보상보험의 보험료징수 등에 관한 법률 시행령 제12조①1호가목 (실업급여 0.9% + 고용안정·직업능력개발 1만분의 25 = 1.15%, 150인 미만)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  truncate_unit:
+    { value: 10, source: "국고금 관리법 제47조③ 준용 (10원 미만 버림)", year: 2026, verified: true, verified_on: "2026-11-07" }

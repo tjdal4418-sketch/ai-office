@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 오피스 · 오피스 뷰</title>
+  <script>
+    // 서버(http://localhost:8000)가 아니라 파일을 그냥 열면(file:// 등) 스크립트·API 를 못 불러와 까만 화면만 나온다 → 안내 배너를 보여 준다
+    window.__NO_SERVER = !/^https?:$/.test(location.protocol);
+    // 모바일(가로 768px 미만)에서는 기존 카드형 홈으로 자동 이동. 좁은 창에서 그대로 보고 싶으면 주소 끝에 ?force=1
+    if (!window.__NO_SERVER && window.innerWidth < 768 && !/[?&]force=1/.test(location.search)) location.replace("/list");
+  </script>
+  <!-- 픽셀 폰트 Galmuri(한글) — 못 불러오면 DotGothic16 → 기본 고딕으로 대체 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+  <style>
+    :root { --bg: #0e1330; --bar: #1a2347; --line: #2a3566; --text: #e8ecff; --sub: #9aa6d6; --gold: #ffe27a; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { background: var(--bg); color: var(--text); font-family: "Galmuri11", "Galmuri9", "DotGothic16", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; display: flex; flex-direction: column; font-size: 14px; }
+    header.top { display: flex; align-items: center; gap: 14px; padding: 8px 16px; background: var(--bar); border-bottom: 2px solid var(--line); flex-wrap: wrap; }
+    .logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+    .views { display: inline-flex; border: 2px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .views a { color: var(--sub); text-decoration: none; padding: 5px 12px; }
+    .views a.active { background: var(--gold); color: #2a2208; font-weight: 700; }
+    .views a:not(.active):hover { background: #26315f; color: var(--text); }
+    .spacer { flex: 1; }
+    .meta { color: var(--sub); }
+    .meta b { color: var(--text); margin-left: 6px; }
+    button { font: inherit; color: var(--text); background: #26315f; border: 2px solid var(--line); border-radius: 8px; padding: 5px 12px; cursor: pointer; }
+    button:hover:not(:disabled) { border-color: var(--gold); }
+    button.on { background: var(--gold); color: #2a2208; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    #stage { flex: 1; min-height: 0; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 10px; }
+    canvas#office { image-rendering: pixelated; image-rendering: crisp-edges; border: 4px solid #2a3566; border-radius: 4px; box-shadow: 0 0 0 2px #0a0e24, 0 10px 30px rgba(0,0,0,.5); background: #000; }
+    .ticker { color: var(--text); }
+    .ticker.flash { animation: flash 1.2s ease-out; }
+    @keyframes flash { from { color: var(--gold); } to { color: var(--text); } }
+    footer { padding: 6px 16px; background: var(--bar); border-top: 2px solid var(--line); color: var(--sub); display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+    #tip { position: fixed; z-index: 30; max-width: 320px; padding: 6px 10px; background: #fff9e0; color: #3a2a15; border: 2px solid #6b4a26; border-radius: 6px; font-size: 13px; pointer-events: none; white-space: pre-line; box-shadow: 2px 3px 0 rgba(0,0,0,.35); }
+    #noServer[hidden] { display: none !important; } /* 인라인 display:flex 가 hidden 을 덮어쓰지 않게 */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ---- 정보 줄 (D-day · 오늘 요약 · 규칙 미확인 · 에이전트 상태) ---- */
+    .infobar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 16px; background: #141b3c; border-bottom: 2px solid var(--line); font-size: 13px; }
+    .infobar .grp { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .infobar .sep { flex: 1; }
+    .chip { font: inherit; font-size: 12.5px; color: var(--text); background: #1d2750; border: 2px solid var(--line); border-radius: 999px; padding: 2px 10px; white-space: nowrap; cursor: default; }
+    button.chip { cursor: pointer; }
+    button.chip:hover { border-color: var(--gold); }
+    .chip b { color: var(--gold); }
+    .chip.warn { border-color: #c79a1a; background: #3a3010; }
+    .chip.bad { border-color: #d6483f; background: #3d1414; color: #ffd0cc; }
+    .chip.bad b { color: #ff9b94; }
+    .chip.ok { border-color: #2a9d5c; }
+    .chip.dday.near { border-color: #c79a1a; }
+    .chip.dday.soon { border-color: #d6483f; background: #3d1414; }
+    .chip .unv { margin-left: 6px; font-size: 10px; padding: 1px 5px; border-radius: 6px; background: #2a3566; color: var(--sub); }
+    .chip.s-working { border-color: #5a8fd6; } .chip.s-review { border-color: #c79a1a; background: #3a3010; }
+    .chip.s-error { border-color: #d6483f; background: #3d1414; } .chip.s-done { border-color: #2a9d5c; }
+
+    /* ---- 사이드 패널 ---- */
+    #panel { position: fixed; right: 0; bottom: 0; width: min(420px, 100vw); z-index: 20; background: #f7f3e6; color: #2b2418; border-left: 4px solid #6b4a26; box-shadow: -6px 0 24px rgba(0,0,0,.45); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .18s ease-out; outline: none; font-size: 13.5px; }
+    #panel[hidden] { display: none; }
+    #panel.open { transform: none; }
+    #panel header.ph { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; background: #e9dfc4; border-bottom: 2px solid #c9b88a; }
+    #panel header.ph h2 { margin: 0; font-size: 16px; } #panel header.ph .sub { font-size: 12px; color: #6a5d40; }
+    #panel header.ph .grow { flex: 1; }
+    #panel header.ph button { color: #2b2418; background: #f7f3e6; border-color: #c9b88a; padding: 2px 9px; }
+    #panelBody { flex: 1; overflow-y: auto; padding: 4px 12px 24px; }
+    .sec { padding: 10px 0; border-bottom: 1px dashed #d4c8a3; } .sec:last-child { border-bottom: 0; }
+    .sec h3 { margin: 0 0 6px; font-size: 13.5px; }
+    .small { font-size: 12px; color: #6a5d40; } .warn { color: #a05a00; } .req { color: #c0392b; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+    #panel input, #panel select { font: inherit; font-size: 13px; padding: 4px 8px; border: 2px solid #c9b88a; border-radius: 6px; background: #fffdf5; color: #2b2418; max-width: 100%; }
+    #panel label { display: block; margin: 6px 0; font-size: 12.5px; } #panel label input, #panel label select { display: block; width: 100%; margin-top: 2px; }
+    #panel label.chk { display: inline-flex; align-items: center; gap: 4px; margin: 0; } #panel label.chk input { display: inline; width: auto; margin: 0; }
+    #panel input[aria-invalid="true"] { border-color: #c0392b; background: #fff0ee; }
+    .pbtn { font: inherit; font-size: 13px; padding: 5px 14px; border: 2px solid #8a6d3a; border-radius: 8px; background: #fffdf5; color: #2b2418; cursor: pointer; }
+    .pbtn:hover:not(:disabled) { background: #fff3c4; } .pbtn.primary { background: #3d7fd9; border-color: #2a5fa8; color: #fff; } .pbtn.danger { background: #d6483f; border-color: #a02a24; color: #fff; }
+    .pbtn:disabled { opacity: .5; cursor: not-allowed; }
+    .plink { color: #1f5fb4; font-size: 12.5px; display: inline-block; margin: 4px 0; }
+    .live { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .sbadge { padding: 2px 10px; border-radius: 999px; border: 2px solid #c9b88a; background: #fffdf5; font-weight: 700; }
+    .sbadge.s-working { border-color: #5a8fd6; } .sbadge.s-review { border-color: #c79a1a; background: #fff3c4; } .sbadge.s-error { border-color: #d6483f; background: #ffe2df; } .sbadge.s-done { border-color: #2a9d5c; background: #dff6e8; }
+    .pbar { height: 9px; background: #d9d0b4; border-radius: 3px; overflow: hidden; margin: 4px 0; } .pbar i { display: block; height: 100%; background: #3d7fd9; }
+    .perr { color: #b4231a; font-weight: 700; margin: 4px 0; }
+    .review { background: #fff8d6; border: 2px solid #c79a1a; border-radius: 8px; padding: 8px 10px; }
+    ul.anoms, ul.tasks, ul.events, ul.logs { list-style: none; margin: 6px 0; padding: 0; } ul.anoms li, ul.tasks li, ul.events li, ul.logs li { padding: 5px 0; border-bottom: 1px dotted #d4c8a3; }
+    .ptoast { position: sticky; bottom: 0; margin: 0; padding: 7px 12px; font-size: 13px; font-weight: 700; } .ptoast[hidden] { display: none; } .ptoast.ok { background: #dff6e8; color: #17653a; } .ptoast.bad { background: #ffe2df; color: #a02a24; }
+    /* 캘린더 */
+    .calnav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-h { text-align: center; font-size: 11.5px; color: #6a5d40; padding: 2px 0; } .cal-h.red, .cal-cell.red .cal-d { color: #c0392b; }
+    .cal-cell { min-height: 46px; border: 1px solid #d4c8a3; border-radius: 4px; background: #fffdf5; padding: 2px 3px; font-size: 11px; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+    .cal-cell.empty { border-color: transparent; background: transparent; } .cal-cell.today { border: 2px solid #3d7fd9; background: #eaf2ff; }
+    .cal-d { font-weight: 700; } .cal-chip { font-style: normal; font-size: 10px; color: #fff; border-radius: 4px; padding: 0 4px; white-space: nowrap; }
+    .dd { font-weight: 700; color: #3d7fd9; } .dd.soon { color: #c0392b; }
+    .todo-tag { font-size: 11px; font-weight: 700; color: #fff; background: #d6483f; border-radius: 4px; padding: 1px 6px; } .ok-tag { font-size: 11px; font-weight: 700; color: #17653a; background: #dff6e8; border-radius: 4px; padding: 1px 6px; }
+    /* 법령 자료실 */
+    .rsum { font-size: 15px; margin-bottom: 4px; } .todo-count { color: #c0392b; } .ext-count { color: #c26a00; }
+    .ext-tag { font-size: 11px; font-weight: 700; color: #fff; background: #e08a1e; border-radius: 4px; padding: 1px 6px; } .ext-where { color: #8a4b00; }
+    .rule.ext { border-left-color: #e08a1e; background: #fff6e8; }
+    details { margin: 6px 0; border: 2px solid #d4c8a3; border-radius: 8px; background: #fffdf5; } summary { cursor: pointer; padding: 6px 10px; font-weight: 700; }
+    .rule { padding: 6px 10px; border-top: 1px dotted #d4c8a3; border-left: 5px solid #2a9d5c; } .rule.todo { border-left-color: #d6483f; background: #fff2f0; }
+    .rpath { font-size: 12px; color: #6a5d40; word-break: break-all; } .rval { font-weight: 700; word-break: break-all; }
+    code { background: #efe6c9; padding: 0 4px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="noServer" hidden style="position:fixed;inset:0;z-index:100;background:#0e1330;color:#e8ecff;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div style="max-width:560px;line-height:1.7;border:3px solid #ffe27a;border-radius:12px;padding:20px 24px;background:#1a2347">
+      <h2 style="margin:0 0 8px">⚠ 서버를 거치지 않고 파일을 직접 열었어요</h2>
+      <p style="margin:0 0 10px">이 화면은 파일을 더블클릭하거나 미리보기로 열면 동작하지 않아요. (스크립트와 데이터를 서버에서 가져오기 때문이에요. <b>목록 뷰</b> 링크도 서버가 아니라 내 C 드라이브 쪽으로 가요.)</p>
+      <ol style="margin:0 0 10px;padding-left:20px">
+        <li>프로젝트 폴더의 <b>run_office.bat</b> 를 더블클릭하세요. (서버를 켜고 브라우저를 열어 줘요)</li>
+        <li>또는 터미널에서 먼저 프로젝트 폴더로 이동(<code style="background:#26315f;padding:1px 6px;border-radius:4px">cd /d "C:\path\to\ai-office"</code>)한 뒤 <code style="background:#26315f;padding:1px 6px;border-radius:4px">.venv\Scripts\python.exe -m uvicorn app.main:app</code> 를 실행하고 아래 주소로 접속하세요.</li>
+      </ol>
+      <p style="margin:0"><a href="http://localhost:8000/" style="color:#ffe27a;font-weight:700">http://localhost:8000/</a></p>
+    </div>
+  </div>
+  <script>
+    if (window.__NO_SERVER) {
+      document.getElementById("noServer").hidden = false;
+      document.querySelectorAll(".views a").forEach((a, i) => { a.href = i === 0 ? "http://localhost:8000/" : "http://localhost:8000/list"; });
+    }
+  </script>
+  <header class="top">
+    <span class="logo">🏢 AI 오피스</span>
+    <nav class="views" aria-label="보기 전환">
+      <a class="active" href="/" aria-current="page">🏢 오피스 뷰</a>
+      <a href="/list">📋 목록 뷰</a>
+    </nav>
+    <span class="spacer"></span>
+    <span id="mode" class="meta">연결 중…</span>
+    <span class="meta"><span id="date"></span><b id="clock"></b></span>
+    <button id="gridBtn" type="button" aria-pressed="false" title="막힌 칸·앉는 자리 확인 (G 키)">격자 보기 (G)</button>
+    <button id="demoBtn" type="button" title="5명이 일하는중→검토필요→완료→대기중을 차례로 도는 시연 (GIF 녹화용)">▶ 데모</button>
+  </header>
+
+  <div class="infobar" id="infobar">
+    <div class="grp" id="ibDday" aria-label="신고기한 D-day"></div>
+    <div class="grp" id="ibSummary" aria-label="오늘 작업 요약"></div>
+    <button class="chip" id="ibRules" data-open="rules" type="button">📚 법령 자료실</button>
+    <span class="sep"></span>
+    <div class="grp" id="ibAgents" aria-label="에이전트 상태 — 누르면 패널이 열려요"></div>
+    <button class="chip" data-open="calendar" type="button" title="신고기한 캘린더 (화이트보드)">📅 캘린더</button>
+    <button class="chip" data-open="log" type="button" title="실시간 활동 로그 (TV)">📺 활동 로그</button>
+  </div>
+
+  <main id="stage">
+    <canvas id="office" role="img" aria-label="AI 오피스 평면도. 매니저·페이·북키·배트·코택 다섯 명의 현재 상태는 아래 숨김 목록과 위쪽 상태 버튼에서 확인할 수 있어요."></canvas>
+  </main>
+  <ul id="a11yStatus" class="sr-only" aria-live="polite"></ul>
+
+  <footer>
+    <span id="ticker" class="ticker" title="최근 활동 로그">활동 로그를 기다리는 중…</span>
+    <span id="note"></span>
+    <span id="behaviorInfo" hidden style="flex-basis:100%;font-size:12px;opacity:.85"></span>
+  </footer>
+
+  <aside id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle" tabindex="-1" hidden>
+    <header class="ph">
+      <div class="grow"><h2 id="panelTitle"></h2><div class="sub" id="panelSub"></div></div>
+      <button id="panelClose" type="button" aria-label="패널 닫기 (ESC)" title="닫기 (ESC)">✕</button>
+    </header>
+    <div id="panelBody"></div>
+    <div id="panelToast" class="ptoast" role="status" hidden></div>
+  </aside>
+  <div id="tip" role="tooltip" hidden></div>
+
+  <script src="/static/js/app.js"></script>
+  <script src="/static/office/map.js?v=15"></script>
+  <script src="/static/office/sprites.js?v=15"></script>
+  <script src="/static/office/ui.js?v=15"></script>
+  <script src="/static/office/agents.js?v=15"></script>
+  <script src="/static/office/panels.js?v=15"></script>
+  <script src="/static/office/main.js?v=15"></script>
+</body>
+</html>

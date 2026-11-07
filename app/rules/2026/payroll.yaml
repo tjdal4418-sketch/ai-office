@@ -1,0 +1,18 @@
+# 급여 일반 규칙 — 적용연도 2026
+# 2026-11-07 법령 MCP·고시 확인 결과 반영 (확인된 항목: verified: true).
+
+nontaxable:                          # 비과세 한도 (월)
+  meal_monthly_limit:                # 식대
+    { value: 200000, source: "소득세법 제12조제3호러목 (식사·식사대 월 20만원 이하 비과세)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  own_car_monthly_limit:             # 자가운전보조금
+    { value: 200000, source: "소득세법 시행령 제12조제3호 (월 20만원 이하 비과세)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+minimum_wage:                        # 최저임금
+  hourly:
+    { value: 10320, source: "2026년 최저임금 고시 (고용노동부)", year: 2026, verified: true, verified_on: "2026-11-07" }
+  monthly_hours:                     # 월 소정근로(주휴 포함) 시간 환산
+    { value: 209, source: "주 40시간제 월 환산시간 (고용노동부 안내 기준)", year: 2026, verified: true, verified_on: "2026-11-07" }
+
+anomaly:                             # 이상항목 점검 기준 (사무실 내부 기준 — 법령 아님)
+  salary_change_ratio:
+    { value: 0.30, source: "사무실 내부 기준 (요청: 전월 대비 30% 이상 변동)", year: 2026, verified: true, verified_on: "2026-11-07" }

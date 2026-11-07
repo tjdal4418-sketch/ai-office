@@ -1,0 +1,26 @@
+# 세무조사·외부감사 대응 요청자료 목록 템플릿 — 사무실 업무 양식 (법령 수치 아님)
+# auto_ready: 코택이 입력으로 미리 준비 상태를 채울 수 있는 항목
+#   tb : 시산표를 입력으로 받았으면 '준비중'(담당자 검토 승인 전) / 그 외는 '미준비'
+# 사무실 내부 기준입니다. 실제 조사·감사 요청 목록에 맞게 보정하세요.
+meta:
+  kind: 사무실 업무 양식 (법령 아님)
+  verified: true
+  verified_on: "2026-11-07"
+
+items:
+  - { key: tax_return,     category: 신고서, title: "법인세 신고서·세무조정계산서",                    owner: 세무팀,   auto_ready: "" }
+  - { key: fs,             category: 재무,   title: "재무제표·합계잔액시산표",                        owner: 회계팀,   auto_ready: tb }
+  - { key: ledger,         category: 재무,   title: "총계정원장·보조원장",                            owner: 회계팀,   auto_ready: "" }
+  - { key: evidence,       category: 증빙,   title: "세금계산서·계산서·카드·현금영수증 증빙 원본",     owner: 회계팀,   auto_ready: "" }
+  - { key: entertainment,  category: 비용,   title: "기업업무추진비 지출 명세·증빙(건당 금액, 상대방, 목적)",  owner: 총무팀,   auto_ready: "" }
+  - { key: payroll,        category: 인사,   title: "급여대장·퇴직금 지급 자료·4대보험 신고 내역",     owner: 인사팀,   auto_ready: "" }
+  - { key: withholding,    category: 신고서, title: "원천징수이행상황신고서·지급명세서 제출 내역",     owner: 세무팀,   auto_ready: "" }
+  - { key: vat,            category: 신고서, title: "부가세 신고서·매출매입처별 세금계산서합계표",     owner: 세무팀,   auto_ready: "" }
+  - { key: advance,        category: 가계정, title: "가지급금·가수금 명세, 약정서, 이자 수령 내역",   owner: 회계팀,   auto_ready: "" }
+  - { key: fixed_asset,    category: 자산,   title: "고정자산대장·감가상각 명세·취득 증빙",           owner: 총무팀,   auto_ready: "" }
+  - { key: donation,       category: 비용,   title: "기부금 영수증·기부금 명세",                      owner: 총무팀,   auto_ready: "" }
+  - { key: vehicle,        category: 비용,   title: "업무용승용차 운행기록부·차량 등록·보험증권",     owner: 총무팀,   auto_ready: "" }
+  - { key: bad_debt,       category: 채권,   title: "채권 명세·연령 분석·대손 처리 근거(회수 노력)",   owner: 영업지원, auto_ready: "" }
+  - { key: related_party,  category: 기타,   title: "특수관계자 거래 명세·계약서",                    owner: 회계팀,   auto_ready: "" }
+  - { key: bank,           category: 자금,   title: "예금 잔액증명서·은행 거래내역",                  owner: 재무팀,   auto_ready: "" }
+  - { key: corporate_docs, category: 기타,   title: "정관·주주명부·등기부등본·이사회 의사록",         owner: 총무팀,   auto_ready: "" }
